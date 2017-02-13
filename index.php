@@ -44,10 +44,13 @@ if (!empty($_POST))
 
 	@mkdir($destFolder.'/'.$width.'x'.$height,0777,true);
 
-	$cdir = scandir($folder); 
-	foreach ($cdir as $key => $value) 
+	$cdir = scandir($folder);
+	foreach ($cdir as $key => $value)
 	{
-		if ( ! in_array($value,array(".",".."))) 
+		if (
+			! in_array($value,array(".","..")) &&
+			$value !== '.DS_Store' // fucking MAC OS
+		)
 		{
 
 			# path infos
@@ -58,16 +61,16 @@ if (!empty($_POST))
 			$dest = $destFolder.'/'.$width.'x'.$height.'/'.$name.'.'.$ext;
 
 			# process
-			$img = new Imagick(); 
+			$img = new Imagick();
 			$img->setBackgroundColor(new ImagickPixel('transparent'));
-			$img->readImage($folder.'/'.$value); 
+			$img->readImage($folder.'/'.$value);
 			$img->setImageFormat($ext);
 			$img->scaleImage($width,$height,true);
 			$img->setImageOpacity($opacity);
 			if ($radius > 0) $img->roundCorners($radius,$radius,1,0,-1);
-			$img->writeImage($dest); 
-			$img->clear(); 
-			$img->destroy(); 
+			$img->writeImage($dest);
+			$img->clear();
+			$img->destroy();
 
 			#
 			print '<img src="' . $dest . '" />';
